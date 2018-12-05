@@ -2,8 +2,8 @@
 ベース： Slackforce https://github.com/ccoenraets/slackforce
 
 # 実現されること
-slackのスラッシュコマンドからチームスピリットの打刻を行うことができる
-スラッシュコマンドを使ったslackアプリの拡張性を考慮してあります。
+- slackのスラッシュコマンドからチームスピリットの打刻を行うことができる  
+- スラッシュコマンドを使ったslackアプリの拡張性を考慮してあります。
 
 # 環境
 - node.js
@@ -14,45 +14,45 @@ slackのスラッシュコマンドからチームスピリットの打刻を行
 node.js上で動きます。私の環境ではheroku上で可動しています。
 
 # チームスピリットの打刻用Apexについて
-ngs/ts-dakoku をそのまま使わせてもらっています(ngsさんに感謝)
-https://github.com/ngs/ts-dakoku/tree/master/apex/src/classes
+ngs/ts-dakoku をそのまま使わせてもらっています(ngsさんに感謝)  
+https://github.com/ngs/ts-dakoku/tree/master/apex/src/classes  
 こちらの２つのクラスを本番環境にデプロイして使ってください
 - TSTimeTableAPIController.cls	
 - TSTimeTableAPIControllerTest.cls	
 設定等についてはこちらを参照：https://ja.ngs.io/2018/02/14/ts-dakoku/
 
 # Salesforceで接続アプリケーションを作る
-アプリ名: 任意
-API Name: 任意
-Contact Email: 管理者のEmail
-OAuth 設定: チェックを入れてください
-コールバック URL: https://myapp.herokuapp.com/oauthcallback (これは後でherokuアプリを立ち上げたあとに書き換えます)
+- アプリ名: 任意
+- API Name: 任意
+- Contact Email: 管理者のEmail
+- OAuth 設定: チェックを入れてください
+- コールバック URL: https://myapp.herokuapp.com/oauthcallback (これは後でherokuアプリを立ち上げたあとに書き換えます)
 Selected OAuth Scopes: Full Access (full)
-保存する
+- 保存する
 
 # herokuアプリを作る
-heroku CLIをインストール
-$ heroku login
-// メアドとパス・二段階認証でログイン
-$ heroku create appName
-//appNameは任意
-//ここまでやるとアプリURLが発行されるので先程作ったSalesforceアプリのコールバックURL(https://myapp.herokuapp.com)部分を置き換えてください
-ここからはGUI。 https://dashboard.heroku.com にログインして先程作ったアプリの設定画面を開く
-Resources画面に行き、add-onにmLab MongoDBを追加
+heroku CLIをインストール  
+$ heroku login  
+// メアドとパス・二段階認証でログイン  
+$ heroku create appName  
+//appNameは任意  
+//ここまでやるとアプリURLが発行されるので先程作ったSalesforceアプリのコールバックURL(https://myapp.herokuapp.com)部分を置き換えてください  
+ここからはGUI。 https://dashboard.heroku.com にログインして先程作ったアプリの設定画面を開く  
+Resources画面に行き、add-onにmLab MongoDBを追加  
 Settings画面に行き、Reveal config varsボタンを押して環境変数を設定します
 
 # slackアプリを作る
-https://api.slack.com/apps
-Create new appする
-Basic Informationにある[Client ID][Client Secret][Verification Token]を以下で使います
-Interactive Componentsに移動してRequest URLに
+https://api.slack.com/apps  
+Create new appする  
+Basic Informationにある[Client ID][Client Secret][Verification Token]を以下で使います  
+Interactive Componentsに移動してRequest URLに  
 先程herokuで作ったアプリのURL/slack/receive を設定する
 
 # スラッシュコマンドを作る
-slackアプリのスラッシュコマンドページへ行き、Create New Commandを押す
-コマンド名： /ts
-Request URL: herokuアプリのURL/ts
-Short Description: チームスピリット打刻コマンド
+slackアプリのスラッシュコマンドページへ行き、Create New Commandを押す  
+コマンド名： /ts  
+Request URL: herokuアプリのURL/ts  
+Short Description: チームスピリット打刻コマンド  
 
 # herokuの環境変数
 - MONGODB_URI herokuのadd onで mLab MongoDB :: Mongodb をインストールすると自動的に入ります
@@ -73,14 +73,14 @@ Short Description: チームスピリット打刻コマンド
 - SLACK_OPPORTUNITY_TOKEN
 
 # 使い方
-slackで /ts と打つとslashコマンドが起動します
-最初はSalesforceへのログイン認証が必要なので、表示されるURLをクリックしてログイン情報を登録します
-(注意：こちらのデータもmongodbに入れるべきなのですが未実装です)
+slackで /ts と打つとslashコマンドが起動します  
+最初はSalesforceへのログイン認証が必要なので、表示されるURLをクリックしてログイン情報を登録します  
+(注意：こちらのデータもmongodbに入れるべきなのですが未実装です)  
 ログインしたら再度 /ts と打つと、出勤/退勤/キャンセルボタンが表示されますのでボタンを押して打刻してください
 
 # botkitについて
-botkit.jsでbotkitの基本的な機能の実装が可能です
-interactive_message_callbackについてはここで受けることが出来ません。
+botkit.jsでbotkitの基本的な機能の実装が可能です  
+interactive_message_callbackについてはここで受けることが出来ません。  
 エンドポイントは、 modules/receive.js で作成してあるのでそちらで定義してください
 
 # server.jsについて
