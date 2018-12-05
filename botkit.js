@@ -131,18 +131,7 @@ controller.storage.teams.all(function(err,teams) {
 
 });
 
-controller.on('slash_command', function(bot, message) {
-  if (message.token !== process.env.VERIFICATION_TOKEN) return;
 
-  switch (message.command.slice(1)) {
-    case 'button':
-      bot.replyPublic(message, `Hello!! <@${message.user}> `);
-      break;
-    default:
-      bot.replyPrivate(message, 'Illegal command!! :ghost: ' + message.command + '\n');
-      break;
-  }
-});
 
 controller.hears('button', ['direct_message','direct_mention','mention'],function(bot,message) {
   var reply = {
