@@ -17,6 +17,7 @@
     "ejs": "^2.4.1",
     "express": "^4.13.3",
     "heroku-logger": "^0.3.3",
+    "hoek": "^6.1.2",
     "jsforce": "^1.9.1",
     "mongodb": "^2.0",
     "mongoose": "^5.3.14",
@@ -24,7 +25,6 @@
     "monk": "^6.0.6",
     "passport": "^0.4.0",
     "passport-salesforce-oauth2": "0.0.1",
-    "request": "^2.72.0",
-    "hoek": ">=4.2.1"
+    "request": "^2.72.0"
   }
 }
