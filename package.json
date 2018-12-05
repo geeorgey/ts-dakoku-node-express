@@ -24,6 +24,7 @@
     "monk": "^6.0.6",
     "passport": "^0.4.0",
     "passport-salesforce-oauth2": "0.0.1",
-    "request": "^2.72.0"
+    "request": "^2.72.0",
+    "hoek": ">=4.2.1"
   }
 }
