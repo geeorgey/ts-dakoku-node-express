@@ -168,26 +168,3 @@ controller.hears('button', ['direct_message','direct_mention','mention'],functio
   };
   bot.reply(message, reply);
 });
-
-/**
- * Interactive Messageのコールバックイベント
- */
-controller.on('interactive_message_callback', (bot, message) => {
-  // callback_idで振り分ける
-  if (message.callback_id === 'how_do_you_feeling') {
-      const value = message.actions[0].value;
-      const text = value === 'good' ? `It's good!!` : `It's bad.`;
-  
-      // メッセージを書き換えてリプライを送る
-      bot.replyInteractive(message, {
-          text: text
-      }, err => {
-          if (err) {
-              console.error('ERROR: ' + err);
-          }
-      });
-
-  } else {
-      console.error('Could not find callback_id: ' + message.callback_id);
-  }
-});
