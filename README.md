@@ -74,7 +74,7 @@ Short Description: チームスピリット打刻コマンド
 - SLACK_CONTACT_TOKEN
 - SLACK_OPPORTUNITY_TOKEN
 
-#mongoDBについて
+#mongoDBについて  
 herokuダッシュボードよりResourcesタブを開き、mLab MongoDB :: Mongodbをクリックすると、mongo dbの管理画面が開きます  
 sfusers という名前のCollectionsが必要になるので、Add collectionボタンを押して追加してください。  
 その中にSalesforceのアクセストークンが保存されます
