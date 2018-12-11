@@ -6,7 +6,8 @@ let auth = require("./slack-salesforce-auth"),
     SF_LOGIN_URL = process.env.SF_LOGIN_URL,
     SF_CLIENT_ID = process.env.SF_CLIENT_ID,
     SF_CLIENT_SECRET = process.env.SF_CLIENT_SECRET,
-    request = require('request');
+    request = require('request'),
+    mappingsRefresh = {};
 const logger = require('heroku-logger');
 
 exports.execute = (req, res) => {
