@@ -13,12 +13,18 @@ exports.execute = (req, res) => {
         return;
     }
 
-    let slackUserId = req.body.user_id,
-        oauthObj = auth.getOAuthObject(slackUserId);
+    let slackUserId = req.body.user_id;
 
     var params = {};
     params.method = 'GET';
 
+    auth.getOAuthObject(slackUserId).then((oauthObj) => getButtons(oauthObj,params,req,res,slackUserId));
+};
+
+
+function getButtons(oauthObj,params,req,res,slackUserId){
+    return new Promise(resolve => {
+    //ログインセッションがない場合はoauthObjは空
     force.apexrest(oauthObj,'Dakoku',params) //apexrest を GETで叩くと @HttpGetメソッドが呼び出される https://github.com/ngs/ts-dakoku/blob/8582bff49165692f7a4a0979b20bf62449662c88/apex/src/classes/TSTimeTableAPIController.cls#L17
         .then(data => {
             let timetable = JSON.parse(data);
@@ -62,6 +68,46 @@ exports.execute = (req, res) => {
                 res.send(`Salesforceにログインしてからこちらをクリックしてください / Visit this URL to login to Salesforce: https://${req.hostname}/login/` + slackUserId);
             } else {
                 res.send("An error as occurred");
+                //ユーザがmongodbに存在する場合はこちら
+                // error は空
+
+                // slack-salesforce-auth.js より
+                // exports.oauthCallback 部分を利用
+                // refresh tokenを使ってaccess tokenを取得する
+                // https://developer.salesforce.com/docs/atlas.ja-jp.api_rest.meta/api_rest/intro_understanding_refresh_token_oauth.htm
+                let optionsRefresh = {
+                    url: `${SF_LOGIN_URL}/services/oauth2/token`,
+                    qs: {
+                        grant_type: "refresh_token",
+                        client_id: SF_CLIENT_ID,
+                        client_secret: SF_CLIENT_SECRET,
+                        refresh_token: oauthObj.refresh_token,
+                    }
+                };
+                //Refreshtokenを使ってAccessTokenを取得し、ボタンを表示する処理
+                getNewAccessToken(optionsRefresh).then((oauthObj) => getButtons(oauthObj,params,req,res,slackUserId));
             }
         });
-};
+        resolve(oauthObj);
+    });    
+}
+exports.getButtons = getButtons;
+
+//RefreshTokenを使って新しいAccess tokenを取得する
+function getNewAccessToken(optionsRefresh){
+    return new Promise(resolve => {
+        request.post(optionsRefresh, function (errorRefresh, responseRefresh, bodyRefresh) {
+            if (errorRefresh) {
+                console.log(errorRefresh);
+            }        
+            mappingsRefresh[slackUserId] = JSON.parse(bodyRefresh);
+            auth.sfUser.findByIdAndUpdate(slackUserId,{access_token: mappingsRefresh[slackUserId].access_token},{
+                upsert: true,
+                new: true,
+            }, (err, sfuser) => {
+                console.log(err, sfuser);
+                resolve(sfuser._doc);
+            });
+        });
+    });
+}

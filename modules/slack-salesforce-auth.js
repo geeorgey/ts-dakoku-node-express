@@ -6,7 +6,26 @@ var SLACK_LOGIN_TOKEN = process.env.SLACK_LOGIN_TOKEN,
     SF_CLIENT_SECRET = process.env.SF_CLIENT_SECRET,
     SF_LOGIN_URL = process.env.SF_LOGIN_URL,
     request = require('request'),
-    mappings = {};
+    mappings = {},
+    mongoose = require('mongoose');
+const logger = require('heroku-logger');
+var mongoUri = process.env.MONGODB_URI || 'mongodb://localhost/botkit_express_demo'
+mongoose.connect(mongoUri);
+const userSchema = new mongoose.Schema({
+    _id: String,
+    id: String,
+    access_token: String,
+    refresh_token: String,
+    signature: String,
+    id_token: String,
+    instance_url: String,
+    token_type: String,
+    issued_at: String
+});
+const sfUser = mongoose.model('SFUser', userSchema);
+exports.sfUser = sfUser;
+
+
 
 exports.logout = (req,res) => {
 
@@ -71,8 +90,35 @@ exports.oauthCallback = (req, res) => {
             </html>
             `;
         res.send(html);
+
+        //token類が取得できたらmongodbに入れる:最初の一回はこちらが呼ばれる
+        sfUser.findByIdAndUpdate(slackUserId,mappings[slackUserId],{
+            upsert: true,
+            new: true,
+        }, (err, sfuser) => {
+            console.log(err, sfuser);
+        });
+
+
     });
 
 };
 
-exports.getOAuthObject = slackUserId => mappings[slackUserId];
+//mongodbにユーザの存在を確認して処理をする
+exports.getOAuthObject = function(slackUserId){
+    return new Promise(function (resolve, reject) {
+        sfUser.findById(slackUserId,function (err, sfuser) {
+            if (err) {//findがエラーになった場合
+                console.log(err, sfuser);
+            }
+            if (!sfuser) {
+                //ユーザがmongodbに存在しない場合はmappingsにslackID入れてreturn
+                logger.info('[info]', { 'mappings[slackUserId])': mappings[slackUserId] });
+            }else{
+                //ユーザがmongodbに存在する場合はdbから取得したデータの _doc にユーザデータが入っているのでそれをreturn
+                mappings[slackUserId] = sfuser._doc;
+            }
+            resolve(mappings[slackUserId]);
+        });
+    })
+}

@@ -2,9 +2,8 @@
 
 let auth = require("./slack-salesforce-auth"),
     force = require("./force"),
+    ts = require("./ts"),
     VERIFICATION_TOKEN = process.env.VERIFICATION_TOKEN;
-var Botkit = require('../node_modules/botkit/lib/CoreBot.js');
-const logger = require('heroku-logger');
 
 exports.execute = (req, res) => {
     
@@ -20,9 +19,7 @@ exports.execute = (req, res) => {
         res.send("Invalid token");
         return;
     }
-    let slackUserId = payload.user.id,
-        oauthObj = auth.getOAuthObject(slackUserId);
-
+    let slackUserId = payload.user.id;
 
     //payload.callback_idにアクションで設定したIDが入る
     if(payload.callback_id == 'ts1'){ //ts.js のボタンアクションにふったID
@@ -39,20 +36,31 @@ exports.execute = (req, res) => {
             return;
         }
         params.body = bodys; //bodyに作った連想配列を追加
+
+        //実行 
+        auth.getOAuthObject(slackUserId).then((oauthObj) => getTSButtonReturn(oauthObj,params,req,res,slackUserId));
+    }else{
+        //違うcallback_idによる処理を入れる場合は新しいfunction作って追加する
+        //auth.getOAuthObject(slackUserId).then((oauthObj) => anotherFunction(oauthObj,params,req,res,slackUserId));
+    }
+};
+
+function getTSButtonReturn(oauthObj,params,req,res,slackUserId){
+    return new Promise(resolve => {
         force.apexrest(oauthObj,'Dakoku',params)
         .then(data => {
             if(data == 'OK'){ // dataにこちらのレスポンス( OK or NG)が入る https://github.com/ngs/ts-dakoku/blob/8582bff49165692f7a4a0979b20bf62449662c88/apex/src/classes/TSTimeTableAPIController.cls#L32
-                res.json({text: '打刻完了 :smile:'});
+                resolve(res.json({text: '打刻完了 :smile:'}));
             }else{
-                res.json({text: '打刻失敗 :scream: もう一度 /ts コマンドを打ってやり直してください'});                
+                resolve(res.json({text: '打刻失敗 :scream: もう一度 /ts コマンドを打ってやり直してください'}));                
             }
         })
         .catch(error => {
             if (error.code == 401) {
-                res.send(`Visit this URL to login to Salesforce: https://${req.hostname}/login/` + slackUserId);
+                resolve(res.send(`Visit this URL to login to Salesforce: https://${req.hostname}/login/` + slackUserId));
             } else {
-                res.send("An error as occurred");
+                resolve(res.send("An error as occurred"));
             }
         });
-    }
-};
+    });
+}
