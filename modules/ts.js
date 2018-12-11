@@ -2,7 +2,8 @@
 
 let auth = require("./slack-salesforce-auth"),
     force = require("./force"),
-    VERIFICATION_TOKEN = process.env.VERIFICATION_TOKEN;
+    VERIFICATION_TOKEN = process.env.VERIFICATION_TOKEN,
+    SF_LOGIN_URL = process.env.SF_LOGIN_URL;
 const logger = require('heroku-logger');
 
 exports.execute = (req, res) => {
