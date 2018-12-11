@@ -90,7 +90,7 @@ function getButtons(oauthObj,params,req,res,slackUserId){
                     }
                 };
                 //Refreshtokenを使ってAccessTokenを取得し、ボタンを表示する処理
-                getNewAccessToken(optionsRefresh).then((oauthObj) => getButtons(oauthObj,params,req,res,slackUserId));
+                getNewAccessToken(optionsRefresh,slackUserId).then((oauthObj) => getButtons(oauthObj,params,req,res,slackUserId));
             }
         });
         resolve(oauthObj);
@@ -99,7 +99,7 @@ function getButtons(oauthObj,params,req,res,slackUserId){
 exports.getButtons = getButtons;
 
 //RefreshTokenを使って新しいAccess tokenを取得する
-function getNewAccessToken(optionsRefresh){
+function getNewAccessToken(optionsRefresh,slackUserId){
     return new Promise(resolve => {
         request.post(optionsRefresh, function (errorRefresh, responseRefresh, bodyRefresh) {
             if (errorRefresh) {
