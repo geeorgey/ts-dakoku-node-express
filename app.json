@@ -67,6 +67,6 @@
         "description": "最初は空欄でOK:SlackアプリのURL",
         "value":"",
         "required":false
-    },
+    }
 }
 }
