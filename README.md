@@ -3,6 +3,10 @@
 # ts-dakoku-node-express
 ベース： Slackforce https://github.com/ccoenraets/slackforce
 
+# heroku deploy
+    [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
+
 # 実現されること
 - slackのスラッシュコマンドからチームスピリットの打刻を行うことができる  
 - スラッシュコマンドを使ったslackアプリの拡張性を考慮してあります。
