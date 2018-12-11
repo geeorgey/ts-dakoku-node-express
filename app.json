@@ -1,13 +1,13 @@
 {
-  "name": "Slackforce",
-  "description": "Simple message broker to enable Slack to Salesforce communication using Slash Commands",
+  "name": "ts-dakoku-node-express",
+  "description": "update Teamspirit status using Slash Commands",
   "env": {
     "SF_CLIENT_ID": {
-        "description": "SalesforceアプリケーションのクライアントID/Consumer key of your Salesforce Connected App",
+        "description": "Consumer key of your Salesforce Connected App",
         "value":""
     },
     "SF_CLIENT_SECRET": {
-        "description": "SalesforceアプリケーションのクライアントSecret/Consumer secret of your Salesforce Connected App",
+        "description": "Consumer secret of your Salesforce Connected App",
         "value":""
     },
     "SF_USER_NAME": {
@@ -21,11 +21,6 @@
     "SF_LOGIN_URL": {
         "description": "Salesforce login URL",
         "value":"https://login.salesforce.com"
-    },
-    "VERIFICATION_TOKEN": {
-        "description": "SlackアプリのBasic情報ページにあるトークン",
-        "value":"",
-        "required":false
     },
     "SLACK_ACCOUNT_TOKEN": {
         "description": "Slack token for the account slash command",
@@ -54,19 +49,19 @@
         "required":false
     },
     "SLACK_ID": {
-        "description": "SlackアプリのID",
+        "description": "Slack app ID",
         "value":"",
         "required":false
     },
     "SLACK_SECRET": {
-        "description": "SlackアプリのSECRET",
+        "description": "Slack app SECRET",
         "value":"",
         "required":false
     },
     "SLACK_REDIRECT": {
-        "description": "最初は空欄でOK:SlackアプリのURL",
+        "description": "update later: this heroku app URL",
         "value":"",
         "required":false
-    }
-}
+    }    
+  }
 }
